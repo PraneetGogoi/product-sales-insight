@@ -1,0 +1,95 @@
+{
+  "_comment": "NexusPulse Dashboard Data — Edit this file to update the dashboard. Push to GitHub and it auto-refreshes every 30s.",
+  "_last_updated": "2026-05-09",
+
+  "kpis": {
+    "total_revenue": "$1.37M",
+    "units_sold": "5,455",
+    "avg_price": "$253.76",
+    "cities_active": "5",
+    "revenue_change": "+14.2%",
+    "units_change": "+8.7%",
+    "price_change": "-0.3%",
+    "cities_change": "+5 new markets"
+  },
+
+  "monthly_revenue": {
+    "labels": ["25-01","25-02","25-03","25-04","25-05","25-06","25-07","25-08","25-09","25-10","25-11","25-12","26-01","26-02","26-03","26-04","26-05"],
+    "values": [84241, 90810, 84380, 77831, 88174, 79293, 72214, 101723, 81216, 92946, 87310, 86270, 78844, 65951, 84676, 60312, 54841]
+  },
+
+  "monthly_volume": {
+    "labels": ["25-01","25-02","25-03","25-04","25-05","25-06","25-07","25-08","25-09","25-10","25-11","25-12","26-01","26-02","26-03","26-04","26-05"],
+    "values": [343, 347, 322, 316, 338, 360, 294, 397, 338, 348, 364, 320, 318, 257, 381, 203, 209]
+  },
+
+  "overview_bar": {
+    "labels": ["J","F","M","A","M","J","J","A","S","O","N","D"],
+    "values": [38, 44, 50, 46, 58, 65, 54, 70, 78, 100, 92, 88],
+    "tooltips": ["Jan: $486k","Feb: $563k","Mar: $640k","Apr: $589k","May: $742k","Jun: $832k","Jul: $691k","Aug: $896k","Sep: $998k","Oct: $1,280k","Nov: $1,178k","Dec: $1,126k"]
+  },
+
+  "category_revenue": {
+    "labels": ["Sports","Beauty","Home","Books","Fashion","Electronics"],
+    "values": [310, 250, 234, 203, 201, 173],
+    "units": [1106, 958, 942, 917, 804, 728],
+    "avg_prices": [278.7, 260.5, 250.0, 231.2, 250.9, 244.5]
+  },
+
+  "category_share": {
+    "labels": ["Sports","Beauty","Home","Books","Fashion","Electronics"],
+    "percentages": [23, 18, 17, 15, 15, 13],
+    "values": ["$310k","$250k","$234k","$203k","$201k","$173k"]
+  },
+
+  "cities": {
+    "labels": ["Islamabad","Peshawar","Quetta","Lahore","Karachi"],
+    "revenue": [282, 285, 264, 271, 270],
+    "orders": [219, 211, 198, 190, 182]
+  },
+
+  "top_cities_overview": [
+    { "name": "Peshawar", "revenue": "$285k", "pct": 100 },
+    { "name": "Islamabad", "revenue": "$282k", "pct": 99 },
+    { "name": "Lahore", "revenue": "$271k", "pct": 95 },
+    { "name": "Karachi", "revenue": "$270k", "pct": 95 },
+    { "name": "Quetta", "revenue": "$264k", "pct": 93 }
+  ],
+
+  "top_products_revenue": [
+    { "rank": "01", "name": "Treadmill", "value": "$96k", "pct": 100 },
+    { "rank": "02", "name": "Laptop",    "value": "$93k", "pct": 97 },
+    { "rank": "03", "name": "Sofa",      "value": "$87k", "pct": 91 },
+    { "rank": "04", "name": "Dumbbells", "value": "$84k", "pct": 87 },
+    { "rank": "05", "name": "Smartwatch","value": "$79k", "pct": 82 },
+    { "rank": "06", "name": "Foundation","value": "$77k", "pct": 80 },
+    { "rank": "07", "name": "Novel",     "value": "$75k", "pct": 78 },
+    { "rank": "08", "name": "Bed",       "value": "$72k", "pct": 75 },
+    { "rank": "09", "name": "Serum",     "value": "$70k", "pct": 73 },
+    { "rank": "10", "name": "Jeans",     "value": "$66k", "pct": 68 }
+  ],
+
+  "top_products_volume": [
+    { "rank": "01", "name": "Tennis Ball", "value": "330 units", "pct": 100 },
+    { "rank": "02", "name": "Table",       "value": "283 units", "pct": 85 },
+    { "rank": "03", "name": "Gym Gloves",  "value": "281 units", "pct": 85 },
+    { "rank": "04", "name": "Face Wash",   "value": "258 units", "pct": 78 },
+    { "rank": "05", "name": "Lipstick",    "value": "256 units", "pct": 77 }
+  ],
+
+  "bottom_products": [
+    { "rank": "01", "name": "Keyboard",   "value": "$25k", "pct": 26 },
+    { "rank": "02", "name": "Jacket",     "value": "$39k", "pct": 40 },
+    { "rank": "03", "name": "Headphones", "value": "$42k", "pct": 43 },
+    { "rank": "04", "name": "Chair",      "value": "$44k", "pct": 45 },
+    { "rank": "05", "name": "T-Shirt",    "value": "$46k", "pct": 47 }
+  ],
+
+  "aov_by_category": [
+    { "rank": "01", "name": "Sports",      "value": "$1,585", "pct": 100 },
+    { "rank": "02", "name": "Home",        "value": "$1,461", "pct": 92 },
+    { "rank": "03", "name": "Beauty",      "value": "$1,387", "pct": 87 },
+    { "rank": "04", "name": "Fashion",     "value": "$1,263", "pct": 79 },
+    { "rank": "05", "name": "Electronics", "value": "$1,255", "pct": 79 }
+  ]
+}
