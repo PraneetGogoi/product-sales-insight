@@ -1,0 +1,14 @@
+# Python temp scripts
+get_monthly.py
+get_more_data.py
+get_more_trends.py
+replace_colors.py
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
