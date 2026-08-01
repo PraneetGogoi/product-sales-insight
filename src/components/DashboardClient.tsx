@@ -137,7 +137,7 @@ export default function DashboardClient() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                     <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v/1000}k`} />
-                    <Tooltip cursor={{stroke: 'rgba(0,0,0,0.1)', strokeWidth: 2}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: number) => formatCurrency(value)} />
+                    <Tooltip cursor={{stroke: 'rgba(0,0,0,0.1)', strokeWidth: 2}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: any) => formatCurrency(value)} />
                     <Line type="monotone" dataKey="revenue" stroke="teal" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
                   </LineChart>
                 </ResponsiveContainer>
@@ -154,7 +154,7 @@ export default function DashboardClient() {
                   <BarChart data={topProductsRevData || []} layout="vertical" margin={{ left: 20 }}>
                     <XAxis type="number" hide />
                     <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--tm)' }} axisLine={false} tickLine={false} width={100} />
-                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: number) => formatCurrency(value)} />
+                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: any) => formatCurrency(value)} />
                     <Bar dataKey="revenue" fill="var(--indigo)" radius={[0, 4, 4, 0]} barSize={20} />
                   </BarChart>
                 </ResponsiveContainer>
@@ -187,7 +187,7 @@ export default function DashboardClient() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                     <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v/1000}k`} />
-                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: number) => formatCurrency(value)} />
+                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: any) => formatCurrency(value)} />
                     <Bar dataKey="revenue" fill="teal" radius={[4, 4, 0, 0]} barSize={40} />
                   </BarChart>
                 </ResponsiveContainer>
