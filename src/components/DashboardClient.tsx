@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
 
 export default function DashboardClient() {
@@ -68,14 +68,37 @@ export default function DashboardClient() {
     revenue: c.revenue
   }))
 
+  const pieColors = ['#333333', '#555555', '#777777', '#999999', '#bbbbbb'];
+
   return (
     <div style={{ position: 'relative' }}>
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          <filter id="clayFilter">
+            <feDropShadow dx="2" dy="2" stdDeviation="4" floodColor="#000" floodOpacity="0.1" result="shadow" />
+            <feDropShadow dx="-2" dy="-2" stdDeviation="4" floodColor="#fff" floodOpacity="0.8" result="highlight" />
+            <feComposite in="highlight" in2="SourceAlpha" operator="in" result="innerHighlight" />
+            <feComposite in="shadow" in2="SourceAlpha" operator="in" result="innerShadow" />
+            <feMerge>
+              <feMergeNode in="SourceGraphic" />
+              <feMergeNode in="innerHighlight" />
+              <feMergeNode in="innerShadow" />
+            </feMerge>
+          </filter>
+        </defs>
+      </svg>
+
       <div className="watermark">NEXUSPULSE</div>
       
       <div className="ph">
         <div>
           <div className="pt">Sales Overview</div>
-          <div className="ps">Fiscal Year 2024-2026 &middot; All categories &middot; Live data</div>
+          <div className="ps" style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+            Fiscal Year 2024-2026 &middot; All categories &middot; 
+            <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+              Live data <div style={{ width: 8, height: 8, borderRadius: '50%', background: 'radial-gradient(circle at 30% 30%, #00ff00, #006600)', boxShadow: '0 0 10px rgba(0,255,0,0.5)', animation: 'blob-morph 2s infinite' }}></div>
+            </span>
+          </div>
         </div>
       </div>
 
@@ -92,7 +115,9 @@ export default function DashboardClient() {
       </div>
 
       {loading ? (
-        <div style={{ padding: 40, textAlign: 'center', opacity: 0.5 }}>Loading data...</div>
+        <div style={{ padding: 60, textAlign: 'center' }}>
+          <div className="loading-blob"></div>
+        </div>
       ) : error ? (
         <div style={{ padding: 40, textAlign: 'center', color: '#ff4444' }}>
           <strong>Error:</strong> {error}
@@ -101,26 +126,37 @@ export default function DashboardClient() {
       ) : (
         <>
           <div className="kg">
-            <div className="kc" style={{ '--ca': '#00cc00' } as any}>
-              <div className="kiw">💰</div>
+            <div className="kc hero-pebble">
+              <div className="kiw">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="var(--amber)" filter="url(#clayFilter)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+              </div>
               <div className="kl">Total Revenue</div>
               <div className="kv">{formatCurrency(overview?.kpis?.total_revenue || 0)}</div>
               <div className="kd"><span className="du">↗ {overview?.kpis?.revenue_change}</span></div>
             </div>
-            <div className="kc" style={{ '--ca': '#333333' } as any}>
-              <div className="kiw">📦</div>
+            
+            <div className="kc">
+              <div className="kiw">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--indigo)" filter="url(#clayFilter)"><path d="M21 16.5c0 .38-.21.71-.53.88l-7.9 4.44c-.16.12-.36.18-.57.18s-.41-.06-.57-.18l-7.9-4.44A.991.991 0 0 1 3 16.5v-9c0-.38.21-.71.53-.88l7.9-4.44c.16-.12.36-.18.57-.18s.41.06.57.18l7.9 4.44c.32.17.53.5.53.88v9zM12 4.15L6.04 7.5 12 10.85l5.96-3.35L12 4.15z"/></svg>
+              </div>
               <div className="kl">Units Sold</div>
               <div className="kv">{overview?.kpis?.units_sold?.toLocaleString()}</div>
               <div className="kd"><span className="du">↗ {overview?.kpis?.units_change}</span></div>
             </div>
-            <div className="kc" style={{ '--ca': '#1a1a1a' } as any}>
-              <div className="kiw">🏷️</div>
+            
+            <div className="kc">
+              <div className="kiw">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--tm)" filter="url(#clayFilter)"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
+              </div>
               <div className="kl">Avg Price</div>
               <div className="kv">${(overview?.kpis?.avg_price || 0).toFixed(2)}</div>
               <div className="kd"><span className="dd">↘ {overview?.kpis?.price_change}</span></div>
             </div>
-            <div className="kc" style={{ '--ca': '#004d00' } as any}>
-              <div className="kiw">🌍</div>
+            
+            <div className="kc">
+              <div className="kiw">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="var(--rose)" filter="url(#clayFilter)"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+              </div>
               <div className="kl">Active Cities</div>
               <div className="kv">{overview?.kpis?.cities_active}</div>
               <div className="kd"><span className="du">↗ {overview?.kpis?.cities_change}</span></div>
@@ -138,7 +174,7 @@ export default function DashboardClient() {
                     <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v/1000}k`} />
                     <Tooltip cursor={{stroke: 'rgba(0,0,0,0.1)', strokeWidth: 2}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: any) => formatCurrency(value)} />
-                    <Line type="monotone" dataKey="revenue" stroke="teal" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                    <Line type="monotone" dataKey="revenue" stroke="teal" strokeWidth={5} dot={{ r: 6, fill: 'teal', filter: 'url(#clayFilter)' }} activeDot={{ r: 8, fill: 'var(--amber)' }} style={{ filter: 'url(#clayFilter)' }} />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
@@ -149,51 +185,48 @@ export default function DashboardClient() {
             <div className="cc">
               <div className="ct">Top 10 Products by Revenue</div>
               <div className="cs">Revenue (USD)</div>
-              <div style={{ height: 250, marginTop: 16 }}>
+              <div style={{ height: 350, marginTop: 16 }}>
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={topProductsRevData || []} layout="vertical" margin={{ left: 20 }}>
                     <XAxis type="number" hide />
-                    <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--tm)' }} axisLine={false} tickLine={false} width={100} />
+                    <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--tm)' }} axisLine={false} tickLine={false} width={120} />
                     <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: any) => formatCurrency(value)} />
-                    <Bar dataKey="revenue" fill="var(--indigo)" radius={[0, 4, 4, 0]} barSize={20} />
+                    <Bar dataKey="revenue" fill="var(--indigo)" radius={20} barSize={24} style={{ filter: 'url(#clayFilter)' }} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
             <div className="cc">
-              <div className="ct">Top 10 Products by Quantity Sold</div>
-              <div className="cs">Units Sold</div>
-              <div style={{ height: 250, marginTop: 16 }}>
+              <div className="ct">Revenue by Customer City</div>
+              <div className="cs">Revenue concentration across the top 5 regions</div>
+              <div style={{ height: 350, marginTop: 16 }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={topProductsVolData || []} layout="vertical" margin={{ left: 20 }}>
-                    <XAxis type="number" hide />
-                    <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--tm)' }} axisLine={false} tickLine={false} width={100} />
-                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} />
-                    <Bar dataKey="volume" fill="#00cc00" radius={[0, 4, 4, 0]} barSize={20} />
-                  </BarChart>
+                  <PieChart>
+                    <Pie
+                      data={topCitiesData?.slice(0, 5) || []}
+                      dataKey="revenue"
+                      nameKey="name"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={60}
+                      outerRadius={100}
+                      paddingAngle={5}
+                      stroke="none"
+                      style={{ filter: 'url(#clayFilter)' }}
+                    >
+                      {(topCitiesData?.slice(0, 5) || []).map((entry: any, index: number) => (
+                        <Cell key={`cell-${index}`} fill={pieColors[index % pieColors.length]} />
+                      ))}
+                    </Pie>
+                    <Tooltip contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: any) => formatCurrency(value)} />
+                    <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
+                  </PieChart>
                 </ResponsiveContainer>
               </div>
             </div>
           </div>
 
-          <div className="cr" style={{ gridTemplateColumns: '1fr' }}>
-             <div className="cc">
-              <div className="ct">Total Sales Revenue by Customer City</div>
-              <div className="cs">Revenue concentration by region</div>
-              <div style={{ height: 250, marginTop: 16 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={topCitiesData || []}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
-                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v/1000}k`} />
-                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: any) => formatCurrency(value)} />
-                    <Bar dataKey="revenue" fill="teal" radius={[4, 4, 0, 0]} barSize={40} />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </div>
-          </div>
         </>
       )}
     </div>
