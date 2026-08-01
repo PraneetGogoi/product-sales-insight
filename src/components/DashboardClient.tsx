@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts'
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
 
 export default function DashboardClient() {
@@ -11,29 +11,61 @@ export default function DashboardClient() {
   const [products, setProducts] = useState<any>(null)
   const [cities, setCities] = useState<any>(null)
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     async function loadData() {
       setLoading(true)
-      const qs = `?range=${encodeURIComponent(range)}`
-      
-      const [overviewRes, productsRes, citiesRes] = await Promise.all([
-        fetch(`/api/overview${qs}`).then(r => r.json()),
-        fetch(`/api/products${qs}`).then(r => r.json()),
-        fetch(`/api/cities${qs}`).then(r => r.json())
-      ])
+      setError(null)
+      try {
+        const qs = `?range=${encodeURIComponent(range)}`
+        
+        const [overviewRes, productsRes, citiesRes] = await Promise.all([
+          fetch(`/api/overview${qs}`).then(r => {
+            if (!r.ok) throw new Error('Failed to fetch overview data')
+            return r.json()
+          }),
+          fetch(`/api/products${qs}`).then(r => {
+            if (!r.ok) throw new Error('Failed to fetch products data')
+            return r.json()
+          }),
+          fetch(`/api/cities${qs}`).then(r => {
+            if (!r.ok) throw new Error('Failed to fetch cities data')
+            return r.json()
+          })
+        ])
 
-      setOverview(overviewRes)
-      setProducts(productsRes)
-      setCities(citiesRes)
-      setLoading(false)
+        setOverview(overviewRes)
+        setProducts(productsRes)
+        setCities(citiesRes)
+      } catch (err: any) {
+        console.error("Error fetching data:", err)
+        setError(err.message || 'An error occurred while fetching data.')
+      } finally {
+        setLoading(false)
+      }
     }
     loadData()
   }, [range])
 
-  const chartData = overview?.overview_bar?.labels.map((label: string, i: number) => ({
+  const monthlyTrendData = overview?.overview_bar?.labels.map((label: string, i: number) => ({
     name: label,
-    value: overview.overview_bar.values[i]
+    revenue: overview.overview_bar.values[i]
+  }))
+
+  const topProductsRevData = products?.top_products_revenue?.slice(0, 10).map((p: any) => ({
+    name: p.name,
+    revenue: p.value
+  }))
+
+  const topProductsVolData = products?.top_products_volume?.slice(0, 10).map((p: any) => ({
+    name: p.name,
+    volume: p.value
+  }))
+
+  const topCitiesData = cities?.top_cities_overview?.map((c: any) => ({
+    name: c.name,
+    revenue: c.revenue
   }))
 
   return (
@@ -61,6 +93,11 @@ export default function DashboardClient() {
 
       {loading ? (
         <div style={{ padding: 40, textAlign: 'center', opacity: 0.5 }}>Loading data...</div>
+      ) : error ? (
+        <div style={{ padding: 40, textAlign: 'center', color: '#ff4444' }}>
+          <strong>Error:</strong> {error}
+          <p style={{ marginTop: 10, fontSize: 14, opacity: 0.8 }}>Please check if the database is configured correctly on the server.</p>
+        </div>
       ) : (
         <>
           <div className="kg">
@@ -91,60 +128,69 @@ export default function DashboardClient() {
           </div>
 
           <div className="cr">
-            <div className="cc">
-              <div className="ct">Monthly Revenue</div>
+            <div className="cc" style={{ gridColumn: 'span 2' }}>
+              <div className="ct">Monthly Sales Revenue Trend</div>
               <div className="cs">Total USD across all product lines</div>
-              <div style={{ height: 180, marginTop: 16 }}>
+              <div style={{ height: 250, marginTop: 16 }}>
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData || []}>
-                    <XAxis dataKey="name" tick={{ fontSize: 10, fill: 'var(--tm)' }} axisLine={false} tickLine={false} />
-                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} />
-                    <Bar dataKey="value" fill="var(--indigo)" radius={[4, 4, 0, 0]} />
+                  <LineChart data={monthlyTrendData || []}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v/1000}k`} />
+                    <Tooltip cursor={{stroke: 'rgba(0,0,0,0.1)', strokeWidth: 2}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: number) => formatCurrency(value)} />
+                    <Line type="monotone" dataKey="revenue" stroke="teal" strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+          </div>
+
+          <div className="cr">
+            <div className="cc">
+              <div className="ct">Top 10 Products by Revenue</div>
+              <div className="cs">Revenue (USD)</div>
+              <div style={{ height: 250, marginTop: 16 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={topProductsRevData || []} layout="vertical" margin={{ left: 20 }}>
+                    <XAxis type="number" hide />
+                    <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--tm)' }} axisLine={false} tickLine={false} width={100} />
+                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: number) => formatCurrency(value)} />
+                    <Bar dataKey="revenue" fill="var(--indigo)" radius={[0, 4, 4, 0]} barSize={20} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
             <div className="cc">
-              <div className="ct">Top Products</div>
-              <div className="cs">By Revenue USD</div>
-              <div className="cl" style={{ marginTop: 16 }}>
-                {products?.top_products_revenue?.slice(0, 4).map((p: any, i: number) => (
-                  <div className="cir" key={p.name}>
-                    <div className="crk">{p.rank}</div>
-                    <div className="cn">{p.name}</div>
-                    <div className="crv">{formatCurrency(p.value)}</div>
-                  </div>
-                ))}
+              <div className="ct">Top 10 Products by Quantity Sold</div>
+              <div className="cs">Units Sold</div>
+              <div style={{ height: 250, marginTop: 16 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={topProductsVolData || []} layout="vertical" margin={{ left: 20 }}>
+                    <XAxis type="number" hide />
+                    <YAxis dataKey="name" type="category" tick={{ fontSize: 11, fill: 'var(--tm)' }} axisLine={false} tickLine={false} width={100} />
+                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} />
+                    <Bar dataKey="volume" fill="#00cc00" radius={[0, 4, 4, 0]} barSize={20} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
 
-          <div className="cr" style={{ gridTemplateColumns: '1fr 1fr' }}>
+          <div className="cr" style={{ gridTemplateColumns: '1fr' }}>
              <div className="cc">
-              <div className="ct">Top Cities</div>
+              <div className="ct">Total Sales Revenue by Customer City</div>
               <div className="cs">Revenue concentration by region</div>
-              <div className="cl" style={{ marginTop: 16 }}>
-                {cities?.top_cities_overview?.map((c: any, i: number) => (
-                  <div className="cir" key={c.name}>
-                    <div className="crk">0{i+1}</div>
-                    <div className="cn">{c.name}</div>
-                    <div className="crv">{formatCurrency(c.revenue)}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="cc">
-              <div className="ct">Volume Leaders</div>
-              <div className="cs">Top products by units sold</div>
-              <div className="cl" style={{ marginTop: 16 }}>
-                {products?.top_products_volume?.slice(0, 4).map((p: any, i: number) => (
-                  <div className="cir" key={p.name}>
-                    <div className="crk">{p.rank}</div>
-                    <div className="cn">{p.name}</div>
-                    <div className="crv">{p.value.toLocaleString()} units</div>
-                  </div>
-                ))}
+              <div style={{ height: 250, marginTop: 16 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={topCitiesData || []}>
+                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 12, fill: 'var(--tm)' }} axisLine={false} tickLine={false} tickFormatter={(v) => `$${v/1000}k`} />
+                    <Tooltip cursor={{fill: 'rgba(0,0,0,0.05)'}} contentStyle={{ borderRadius: 12, border: 'none', boxShadow: 'var(--nr)' }} formatter={(value: number) => formatCurrency(value)} />
+                    <Bar dataKey="revenue" fill="teal" radius={[4, 4, 0, 0]} barSize={40} />
+                  </BarChart>
+                </ResponsiveContainer>
               </div>
             </div>
           </div>
