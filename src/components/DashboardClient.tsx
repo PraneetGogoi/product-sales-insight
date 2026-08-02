@@ -1,12 +1,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { CircleDollarSign, Package, ShoppingCart, Map } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 
 export default function DashboardClient() {
-  const [range, setRange] = useState('All Time')
+  const searchParams = useSearchParams()
+  const range = searchParams.get('range') || 'All Time'
   
   const [overview, setOverview] = useState<any>(null)
   const [monthlyTrendData, setMonthlyTrendData] = useState<any>(null)
@@ -53,17 +55,6 @@ export default function DashboardClient() {
       <div className="ph" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <h1 className="pt">Good Morning.</h1>
-        </div>
-        <div className="fr" style={{ marginBottom: 0 }}>
-          {['All Time', 'Last Quarter', 'Last Month', 'Last Week'].map(t => (
-            <button 
-              key={t}
-              className={`pill ${range === t ? 'active' : ''}`}
-              onClick={() => setRange(t)}
-            >
-              {t}
-            </button>
-          ))}
         </div>
       </div>
 

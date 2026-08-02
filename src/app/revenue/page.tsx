@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { ComposedChart, Bar, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
 
 export default function RevenuePage() {
-  const [range, setRange] = useState('All Time')
+  const searchParams = useSearchParams()
+  const range = searchParams.get('range') || 'All Time'
   
   const [monthlyTrendData, setMonthlyTrendData] = useState<any>(null)
   const [heatmapData, setHeatmapData] = useState<any>(null)
@@ -49,17 +51,6 @@ export default function RevenuePage() {
       <div className="ph" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <h1 className="pt">Revenue Deep Dive</h1>
-        </div>
-        <div className="fr" style={{ marginBottom: 0 }}>
-          {['All Time', 'Last Quarter', 'Last Month', 'Last Week'].map(t => (
-            <button 
-              key={t}
-              className={`pill ${range === t ? 'active' : ''}`}
-              onClick={() => setRange(t)}
-            >
-              {t}
-            </button>
-          ))}
         </div>
       </div>
 

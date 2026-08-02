@@ -9,7 +9,7 @@ function ProductsContent() {
   const searchParams = useSearchParams()
   const initialSearch = searchParams.get('q') || ''
   
-  const [range, setRange] = useState('All Time')
+  const range = searchParams.get('range') || 'All Time'
   const [search, setSearch] = useState(initialSearch)
   const [debouncedSearch, setDebouncedSearch] = useState(initialSearch)
   
@@ -48,17 +48,6 @@ function ProductsContent() {
       <div className="ph" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <h1 className="pt">Products Analysis</h1>
-        </div>
-        <div className="fr" style={{ marginBottom: 0 }}>
-          {['All Time', 'Last Quarter', 'Last Month', 'Last Week'].map(t => (
-            <button 
-              key={t}
-              className={`pill ${range === t ? 'active' : ''}`}
-              onClick={() => setRange(t)}
-            >
-              {t}
-            </button>
-          ))}
         </div>
       </div>
 

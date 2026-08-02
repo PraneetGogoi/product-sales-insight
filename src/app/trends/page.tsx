@@ -1,11 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, Legend } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
 
 export default function TrendsPage() {
-  const [range, setRange] = useState('All Time')
+  const searchParams = useSearchParams()
+  const range = searchParams.get('range') || 'All Time'
   
   const [weekdayData, setWeekdayData] = useState<any>(null)
   const [trendsData, setTrendsData] = useState<any>(null)
@@ -58,17 +60,6 @@ export default function TrendsPage() {
       <div className="ph" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
         <div>
           <h1 className="pt">Market Trends</h1>
-        </div>
-        <div className="fr" style={{ marginBottom: 0 }}>
-          {['All Time', 'Last Quarter', 'Last Month', 'Last Week'].map(t => (
-            <button 
-              key={t}
-              className={`pill ${range === t ? 'active' : ''}`}
-              onClick={() => setRange(t)}
-            >
-              {t}
-            </button>
-          ))}
         </div>
       </div>
 
