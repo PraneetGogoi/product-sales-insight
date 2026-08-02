@@ -1,6 +1,7 @@
 'use client'
 import { useState, useRef, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { Search, Bell, Menu, User, Settings, LogOut, TrendingDown } from 'lucide-react'
 
 export default function CommandBar() {
@@ -104,14 +105,14 @@ export default function CommandBar() {
           
           {showAvatarMenu && (
             <div className="dropdown-menu">
-              <button className="dropdown-item">
+              <Link href="/profile" className="dropdown-item" style={{ textDecoration: 'none' }} onClick={() => setShowAvatarMenu(false)}>
                 <User size={16} />
                 <span>Profile</span>
-              </button>
-              <button className="dropdown-item">
+              </Link>
+              <Link href="/settings" className="dropdown-item" style={{ textDecoration: 'none' }} onClick={() => setShowAvatarMenu(false)}>
                 <Settings size={16} />
                 <span>Settings</span>
-              </button>
+              </Link>
               <div style={{ height: '1px', background: 'var(--clay-surface)', margin: '4px 0' }}></div>
               <button className="dropdown-item" style={{ color: 'var(--clay-danger)' }}>
                 <LogOut size={16} />
