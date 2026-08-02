@@ -7,6 +7,7 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const range = searchParams.get('range')
   const categoryParam = searchParams.get('category')
+  const by = searchParams.get('by') || 'revenue'
 
   const dateFilter = getDateFilter(range?.toLowerCase() || null)
   
@@ -14,24 +15,27 @@ export async function GET(request: Request) {
   if (dateFilter) where.orderDate = dateFilter
   if (categoryParam) where.category = categoryParam
 
-  const cityStats = await prisma.sale.groupBy({
-    by: ['customerCity'],
+  const productStats = await prisma.sale.groupBy({
+    by: ['productName'],
     where,
     _sum: {
       totalSalesUsd: true,
-      quantitySold: true, // we might use quantitySold or count for "orders"
-    },
-    _count: {
-      _all: true
+      quantitySold: true,
     }
   })
 
-  const sortedCities = [...cityStats].sort((a, b) => (b._sum.totalSalesUsd || 0) - (a._sum.totalSalesUsd || 0))
+  const sorted = [...productStats].sort((a, b) => {
+    if (by === 'quantity') {
+      return (b._sum.quantitySold || 0) - (a._sum.quantitySold || 0)
+    }
+    return (b._sum.totalSalesUsd || 0) - (a._sum.totalSalesUsd || 0)
+  })
+
   return NextResponse.json(
-    sortedCities.map(c => ({
-      name: c.customerCity,
-      revenue: c._sum.totalSalesUsd || 0,
-      quantity: c._sum.quantitySold || 0
+    sorted.slice(0, 10).map((p) => ({
+      name: p.productName,
+      revenue: p._sum.totalSalesUsd || 0,
+      quantity: p._sum.quantitySold || 0
     }))
   )
 }

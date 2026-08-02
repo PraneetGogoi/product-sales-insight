@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Nunito, Space_Mono } from "next/font/google";
 import "./globals.css";
 import CommandBar from "@/components/CommandBar";
-import FloatingDock from "@/components/FloatingDock";
+import Sidebar from "@/components/Sidebar";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -31,10 +31,10 @@ export default function RootLayout({
         <div className="shell">
           <CommandBar />
           <div className="main-area">
+            <Sidebar />
             <main className="main">
               {children}
             </main>
-            <FloatingDock />
           </div>
         </div>
       </body>

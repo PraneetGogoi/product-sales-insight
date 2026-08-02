@@ -6,32 +6,37 @@ import { Prisma } from '@prisma/client'
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const range = searchParams.get('range')
-  const categoryParam = searchParams.get('category')
+  const categoryFilter = searchParams.get('category')
 
   const dateFilter = getDateFilter(range?.toLowerCase() || null)
   
   const where: Prisma.SaleWhereInput = {}
   if (dateFilter) where.orderDate = dateFilter
-  if (categoryParam) where.category = categoryParam
+  if (categoryFilter) where.category = categoryFilter
 
-  const cityStats = await prisma.sale.groupBy({
-    by: ['customerCity'],
+  const categorySales = await prisma.sale.groupBy({
+    by: ['category'],
     where,
     _sum: {
       totalSalesUsd: true,
-      quantitySold: true, // we might use quantitySold or count for "orders"
+      quantitySold: true
     },
-    _count: {
-      _all: true
+    _avg: {
+      priceUsd: true
+    },
+    orderBy: {
+      _sum: {
+        totalSalesUsd: 'desc'
+      }
     }
   })
 
-  const sortedCities = [...cityStats].sort((a, b) => (b._sum.totalSalesUsd || 0) - (a._sum.totalSalesUsd || 0))
   return NextResponse.json(
-    sortedCities.map(c => ({
-      name: c.customerCity,
+    categorySales.map(c => ({
+      name: c.category,
       revenue: c._sum.totalSalesUsd || 0,
-      quantity: c._sum.quantitySold || 0
+      quantity: c._sum.quantitySold || 0,
+      avgPrice: c._avg.priceUsd || 0
     }))
   )
 }

@@ -14,24 +14,24 @@ export async function GET(request: Request) {
   if (dateFilter) where.orderDate = dateFilter
   if (categoryParam) where.category = categoryParam
 
-  const cityStats = await prisma.sale.groupBy({
-    by: ['customerCity'],
+  const allSales = await prisma.sale.findMany({
     where,
-    _sum: {
-      totalSalesUsd: true,
-      quantitySold: true, // we might use quantitySold or count for "orders"
-    },
-    _count: {
-      _all: true
-    }
+    select: { orderDate: true, totalSalesUsd: true }
   })
 
-  const sortedCities = [...cityStats].sort((a, b) => (b._sum.totalSalesUsd || 0) - (a._sum.totalSalesUsd || 0))
+  // Group by weekday (0 = Sun, 1 = Mon...)
+  const weekdayData = [0, 0, 0, 0, 0, 0, 0]
+  allSales.forEach(sale => {
+    const day = sale.orderDate.getDay()
+    weekdayData[day] += sale.totalSalesUsd
+  })
+
+  const labels = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+
   return NextResponse.json(
-    sortedCities.map(c => ({
-      name: c.customerCity,
-      revenue: c._sum.totalSalesUsd || 0,
-      quantity: c._sum.quantitySold || 0
+    labels.map((label, i) => ({
+      day: label,
+      revenue: weekdayData[i]
     }))
   )
 }
