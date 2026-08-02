@@ -1,7 +1,7 @@
 'use client'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { LayoutDashboard, CircleDollarSign, Package, Map, TrendingUp, Settings, ChevronLeft } from 'lucide-react'
+import { LayoutDashboard, CircleDollarSign, Package, Map, TrendingUp, Settings, ChevronLeft, UserCircle2 } from 'lucide-react'
 
 export default function Sidebar() {
   const pathname = usePathname()
@@ -11,7 +11,8 @@ export default function Sidebar() {
     { name: 'Revenue', icon: CircleDollarSign, path: '/revenue' },
     { name: 'Products', icon: Package, path: '/products' },
     { name: 'Cities', icon: Map, path: '/cities' },
-    { name: 'Trends', icon: TrendingUp, path: '/trends' }
+    { name: 'Trends', icon: TrendingUp, path: '/trends' },
+    { name: 'About', icon: UserCircle2, path: '/about' }
   ]
 
   return (

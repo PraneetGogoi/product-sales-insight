@@ -1,37 +1,20 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
-import { useSearchParams } from 'next/navigation'
+
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { CircleDollarSign, Package, ShoppingCart, Map } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 
-function DashboardContent() {
-  const searchParams = useSearchParams()
-  const range = searchParams.get('range') || 'All Time'
-  
-  const [overview, setOverview] = useState<any>(null)
-  const [monthlyTrendData, setMonthlyTrendData] = useState<any>(null)
-  const [topProductsRev, setTopProductsRev] = useState<any>(null)
-  const [categoryData, setCategoryData] = useState<any>(null)
-
-  useEffect(() => {
-    fetch(`/api/overview?range=${encodeURIComponent(range)}`)
-      .then(r => r.json())
-      .then(data => setOverview(data))
-      
-    fetch(`/api/revenue/monthly?range=${encodeURIComponent(range)}`)
-      .then(r => r.json())
-      .then(data => setMonthlyTrendData(data))
-
-    fetch(`/api/products/top?range=${encodeURIComponent(range)}&by=revenue`)
-      .then(r => r.json())
-      .then(data => setTopProductsRev(data))
-
-    fetch(`/api/categories?range=${encodeURIComponent(range)}`)
-      .then(r => r.json())
-      .then(data => setCategoryData(data))
-  }, [range])
+export default function DashboardClient({ 
+  initialOverview, 
+  initialMonthlyTrendData, 
+  initialTopProductsRev, 
+  initialCategoryData 
+}: any) {
+  const overview = initialOverview
+  const monthlyTrendData = initialMonthlyTrendData
+  const topProductsRev = initialTopProductsRev
+  const categoryData = initialCategoryData
 
   const maxMonthRev = Array.isArray(monthlyTrendData) && monthlyTrendData.length > 0 ? Math.max(...monthlyTrendData.map((d: any) => d.revenue)) : 1
   const maxProdRev = Array.isArray(topProductsRev) && topProductsRev.length > 0 ? Math.max(...topProductsRev.map((d: any) => d.revenue)) : 1
@@ -177,13 +160,5 @@ function DashboardContent() {
         </filter>
       </svg>
     </>
-  )
-}
-
-export default function DashboardClient() {
-  return (
-    <Suspense fallback={<div>Loading Dashboard...</div>}>
-      <DashboardContent />
-    </Suspense>
   )
 }
