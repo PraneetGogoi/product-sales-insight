@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Cell, Legend } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
 
-export default function TrendsPage() {
+function TrendsContent() {
   const searchParams = useSearchParams()
   const range = searchParams.get('range') || 'All Time'
   
@@ -175,5 +175,13 @@ export default function TrendsPage() {
         </div>
       </div>
     </>
+  )
+}
+
+export default function TrendsPage() {
+  return (
+    <Suspense fallback={<div>Loading Trends...</div>}>
+      <TrendsContent />
+    </Suspense>
   )
 }

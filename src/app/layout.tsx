@@ -3,6 +3,7 @@ import { Nunito, Space_Mono } from "next/font/google";
 import "./globals.css";
 import CommandBar from "@/components/CommandBar";
 import Sidebar from "@/components/Sidebar";
+import { Suspense } from "react";
 
 const nunito = Nunito({
   variable: "--font-nunito",
@@ -29,7 +30,9 @@ export default function RootLayout({
     <html lang="en" className={`${nunito.variable} ${spaceMono.variable}`}>
       <body>
         <div className="shell">
-          <CommandBar />
+          <Suspense fallback={<div className="command-bar" />}>
+            <CommandBar />
+          </Suspense>
           <div className="main-area">
             <Sidebar />
             <main className="main">

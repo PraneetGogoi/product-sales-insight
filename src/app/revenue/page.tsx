@@ -1,11 +1,11 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ComposedChart, Bar, Line, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
 import { formatCurrency } from '@/lib/utils'
 
-export default function RevenuePage() {
+function RevenueContent() {
   const searchParams = useSearchParams()
   const range = searchParams.get('range') || 'All Time'
   
@@ -169,5 +169,13 @@ export default function RevenuePage() {
         </div>
       </div>
     </>
+  )
+}
+
+export default function RevenuePage() {
+  return (
+    <Suspense fallback={<div>Loading Revenue...</div>}>
+      <RevenueContent />
+    </Suspense>
   )
 }

@@ -1,12 +1,12 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts'
 import { CircleDollarSign, Package, ShoppingCart, Map } from 'lucide-react'
 import { formatCurrency } from '@/lib/utils'
 
-export default function DashboardClient() {
+function DashboardContent() {
   const searchParams = useSearchParams()
   const range = searchParams.get('range') || 'All Time'
   
@@ -177,5 +177,13 @@ export default function DashboardClient() {
         </filter>
       </svg>
     </>
+  )
+}
+
+export default function DashboardClient() {
+  return (
+    <Suspense fallback={<div>Loading Dashboard...</div>}>
+      <DashboardContent />
+    </Suspense>
   )
 }
